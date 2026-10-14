@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cartilha do Guia | Luck Receptivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F8F8;--card:#fff;--ink:#12303A;--mute:#5B7480;--line:#D5E3E6;--sea:#0F6E7A;--sun:#F2B705;--ok:#1E8A5A;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1B20;--card:#142A31;--ink:#E6F1F3;--mute:#9DB6BE;--line:#24424B;--sea:#4FC3D1;--sun:#F2B705;--ok:#5BD39A}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.9rem;font-weight:800;margin:8px 0 4px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 18px}
+input[type=search]{width:100%;padding:14px 16px;font:inherit;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+input:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.tab{font:inherit;font-weight:600;padding:14px 10px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;cursor:pointer;text-align:left}
+.tab[aria-pressed=true]{background:var(--sea);border-color:var(--sea);color:#fff}
+.item{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--sea);border-radius:10px;margin:0 0 10px}
+.item summary{padding:14px 16px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.item summary::-webkit-details-marker{display:none}
+.item summary::after{content:"+";font-weight:400;font-size:1.3rem;line-height:1;color:var(--sea)}
+.item[open] summary::after{content:"–"}
+.body{padding:0 16px 16px;white-space:pre-line}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{font:inherit;font-weight:600;font-size:.95rem;padding:10px 14px;border-radius:10px;border:2px solid var(--sea);background:transparent;color:var(--sea);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.main{background:var(--sun);border-color:var(--sun);color:#12303A}
+.btn.done{border-color:var(--ok);color:var(--ok)}
+table{width:100%;border-collapse:collapse;margin-top:6px}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mute);font-weight:600;font-size:.9rem}
+.todo{color:var(--mute);font-style:italic}
+.empty{color:var(--mute);padding:20px 0}
+footer{color:var(--mute);font-size:.85rem;margin-top:24px}
+</style>
+</head>
+<body>
+<main>
+<h1>Cartilha do Guia</h1>
+<p class="sub">Luck Receptivo · tudo o que você mais pergunta, em um toque.</p>
+<input type="search" id="q" placeholder="Buscar: CNPJ, valor, folder..." aria-label="Buscar">
+<div class="tabs" id="tabs"></div>
+<div id="list"></div>
+<footer id="foot"></footer>
+</main>
+<script>
+/* ===== EDITE AQUI: troque os textos "PREENCHER" pelas informações reais ===== */
+var DATA = {
+  "Empresa": [
+    {t:"CNPJ da empresa", b:"10.866.549/0001-17", copy:"10.866.549/0001-17"},
+    {t:"Endereço da garagem (Prazeres)", b:"Rua Projetada 2, nº 338", copy:"Rua Projetada 2, nº 338"}
+  ],
+  "Passeios": [
+    {t:"Frequência dos passeios saindo de Porto", b:"Consultar com o operacional de Porto.", link:"https://wa.me/5581999481525", linkTxt:"Falar com operacional Porto"},
+    {t:"Frequência dos passeios em espanhol saindo de Porto", b:"Consultar com o operacional de Porto.", link:"https://wa.me/5581999481525", linkTxt:"Falar com operacional Porto"},
+    {t:"Frequência dos passeios saindo de Recife", table:[["Dia","Passeios"],["Segunda","Porto, City, Cabo"],["Terça","Maragogi, City, Porto"],["Quarta","Porto, Carneiros, JPA, Litoral"],["Quinta","Maragogi, City"],["Sexta","Maragogi, Porto, Cabo, City"],["Sábado","Carneiros, Porto, City"],["Domingo","Carneiros e Maragogi"]]},
+    {t:"Folders dos passeios", b:"PREENCHER links dos folders", link:"#", linkTxt:"Abrir folders"}
+  ],
+  "Valores": [
+    {t:"Tabela de valores dos passeios", table:[["Passeio","Adulto","Criança"],["Porto","R$ PREENCHER","R$ PREENCHER"],["City","R$ PREENCHER","R$ PREENCHER"],["Cabo","R$ PREENCHER","R$ PREENCHER"],["Maragogi","R$ PREENCHER","R$ PREENCHER"],["Carneiros","R$ PREENCHER","R$ PREENCHER"],["JPA","R$ PREENCHER","R$ PREENCHER"],["Litoral","R$ PREENCHER","R$ PREENCHER"]]},
+    {t:"Opcionais: Carneiros", b:"Valores por pessoa, compartilhado (junto com outras pessoas).", table:[["Opcional","Valor"],["Passeio de catamarã","R$ 75,00"],["Lancha","R$ 90,00"]]},
+    {t:"Opcionais: Praia de São José da Coroa Grande", table:[["Opcional","Valor"],["Catamarã para as piscinas naturais","R$ 115,00 (R$ 105,00 em espécie)"]]},
+    {t:"Opcionais: City tour", b:"Valores por pessoa.", table:[["Opcional","Valor"],["Passeio de catamarã","R$ 60,00"],["Embaixada de bonecos gigantes + Embaixada de Pernambuco","R$ 50,00"],["Toyotas Olinda","R$ 68,00"]]},
+    {t:"Opcionais: Cabo de Santo Agostinho", table:[["Opcional","Dinheiro ou Pix","Cartões / demais formas"],["Buggy","R$ 300,00","R$ 320,00"],["Buggy compartilhado (por pessoa)","R$ 75,00","R$ 80,00"],["Catamarã","R$ 85,00","R$ 90,00"]]},
+    {t:"Opcionais: Maragogi", b:"Valores por pessoa.", table:[["Opcional","Valor"],["Catamarã para as piscinas naturais","R$ 140,00 (R$ 130,00 em espécie)"],["Passeio de orla","R$ 90,00 (R$ 75,00 em espécie)"],["Passeio de buggy","R$ 85,00"],["Mergulho","R$ 160,00"],["Passeio de lancha","R$ 250,00 (R$ 230,00 em espécie)"]]},
+    {t:"Opcionais: João Pessoa", table:[["Opcional","Valor"],["Catamarã","R$ 90,00"]]},
+    {t:"Opcionais: Litoral Norte", table:[["Opcional","Valor"],["Catamarã","R$ 95,00"]]}
+  ],
+  "Dúvidas": [
+    {t:"O que fazer se o cliente não aparecer (no-show)?", b:"O número da REC está na informação da liberação do passeio.\nSe for no IN, informar ao box."},
+    {t:"O que fazer em caso de atraso ou problema com o veículo?", b:"Contatar o box.\nPasseio saindo de Porto: operacional de Porto.\nPasseio saindo de Recife: operacional de Recife.\nOs contatos estão na aba Contatos."},
+    {t:"Horário de apresentação", b:"Pergunte à Central em qual garagem se apresentar: Porto ou Recife.", table:[["Serviço","Apresentação"],["IN","30 min antes, no aeroporto"],["OUT Porto","2h antes"],["OUT Cabo e Recife","1h antes"],["OUT Maragogi","4h antes"]]},
+    {t:"Documentos que o guia deve levar", b:"RG e carteira de guia."}
+  ],
+  "Cancelamento": [
+    {t:"Política de cancelamento", table:[["Quando o cliente cancela","Reembolso"],["Até 48h antes do passeio","100%"],["De 48h até 12h (meio-dia) do dia anterior","50%"],["Após as 12h (meio-dia) do dia anterior","Sem reembolso"]]},
+    {t:"E se o tempo estiver ruim?", b:"Não há reembolso por mudanças decorrentes de condições atmosféricas."}
+  ],
+  "Contatos": [
+    {t:"Central: Tânia", b:"81 9639-3579", link:"https://wa.me/5581996393579", linkTxt:"Chamar no WhatsApp", copy:"81 9639-3579"},
+    {t:"Central: Bianca", b:"81 9278-2489", link:"https://wa.me/5581992782489", linkTxt:"Chamar no WhatsApp", copy:"81 9278-2489"},
+    {t:"Central: Ana", b:"81 8944-7955", link:"https://wa.me/5581989447955", linkTxt:"Chamar no WhatsApp", copy:"81 8944-7955"},
+    {t:"Gestora Vera", b:"81 9998-2889", link:"https://wa.me/5581999982889", linkTxt:"Chamar no WhatsApp", copy:"81 9998-2889"},
+    {t:"Diretora", b:"81 9963-0174", link:"https://wa.me/5581999630174", linkTxt:"Chamar no WhatsApp", copy:"81 9963-0174"},
+    {t:"Plantão 24h aeroporto", b:"81 9945-4393", link:"https://wa.me/5581999454393", linkTxt:"Chamar no WhatsApp", copy:"81 9945-4393"},
+    {t:"Operacional Porto", b:"81 9948-1525", link:"https://wa.me/5581999481525", linkTxt:"Chamar no WhatsApp", copy:"81 9948-1525"},
+    {t:"Luck Viagens", b:"81 8118-4883", link:"https://wa.me/5581981184883", linkTxt:"Chamar no WhatsApp", copy:"81 8118-4883"}
+  ]
+};
+var UPDATED = "PREENCHER data da última atualização";
+/* ============================================================================ */
+var tab = "Todos", q = "";
+var tabsEl = document.getElementById("tabs"), listEl = document.getElementById("list");
+document.getElementById("foot").textContent = "Atualizado em " + UPDATED + ". Dúvida que não está aqui? Fale com a operação.";
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function plain(it){return (it.t+" "+(it.b||"")+" "+(it.table?it.table.join(" "):"")).toLowerCase()}
+
+function drawTabs(){
+  tabsEl.innerHTML = "";
+  ["Todos"].concat(Object.keys(DATA)).forEach(function(n){
+    var b = document.createElement("button");
+    b.className = "tab"; b.textContent = n; b.setAttribute("aria-pressed", n===tab);
+    b.onclick = function(){tab = n; drawTabs(); draw()};
+    tabsEl.appendChild(b);
+  });
+}
+
+function draw(){
+  var html = "", count = 0;
+  Object.keys(DATA).forEach(function(cat){
+    if(tab!=="Todos" && tab!==cat) return;
+    DATA[cat].forEach(function(it, i){
+      if(q && plain(it).indexOf(q)<0) return;
+      count++;
+      var body = "";
+      if(it.b) body += '<div class="body-text'+(it.b.indexOf("PREENCHER")>-1?' todo':'')+'">'+esc(it.b)+'</div>';
+      if(it.table){
+        body += "<table>"+it.table.map(function(r,ri){return "<tr>"+r.map(function(c){return ri?"<td>"+esc(c)+"</td>":"<th>"+esc(c)+"</th>"}).join("")+"</tr>"}).join("")+"</table>";
+      }
+      var btns = "";
+      if(it.link) btns += '<a class="btn main" target="_blank" rel="noopener" href="'+esc(it.link)+'">'+esc(it.linkTxt||"Abrir")+'</a>';
+      if(it.copy) btns += '<button class="btn" data-copy="'+esc(it.copy)+'">Copiar</button>';
+      html += '<details class="item"'+(q?' open':'')+'><summary>'+esc(it.t)+'</summary><div class="body">'+body+(btns?'<div class="btns">'+btns+'</div>':'')+'</div></details>';
+    });
+  });
+  listEl.innerHTML = html || '<p class="empty">Nada encontrado. Tente outra palavra ou fale com a operação.</p>';
+}
+
+listEl.addEventListener("click", function(e){
+  var b = e.target.closest("[data-copy]"); if(!b) return;
+  var txt = b.getAttribute("data-copy");
+  var ok = function(){b.textContent = "Copiado!"; b.classList.add("done"); setTimeout(function(){b.textContent="Copiar"; b.classList.remove("done")},1500)};
+  try{ navigator.clipboard.writeText(txt).then(ok, fallback) }catch(x){ fallback() }
+  function fallback(){var t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(x){}document.body.removeChild(t)}
+});
+document.getElementById("q").addEventListener("input", function(e){q = e.target.value.trim().toLowerCase(); draw()});
+drawTabs(); draw();
+</script>
+</body>
+</html>
